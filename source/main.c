@@ -21,11 +21,14 @@ int main() {
 
 	obj_set_pos(obj_buffer,SCREEN_WIDTH/2-16,SCREEN_WIDTH/2-16);
 	
-	float x = SCREEN_WIDTH/2-16;
-	float y = SCREEN_HEIGHT/2-16;
+	float x = SCREEN_WIDTH/2-32;
+	float y = SCREEN_HEIGHT/2-32;
 
 	u16 rot = 0;
-	int scale = 300;
+	int scale = 320;
+
+	float speed = 0;
+	float friction = .99f;
 
 	while(true) {
 		vid_vsync();
@@ -33,9 +36,14 @@ int main() {
 
 		rot += key_tri_horz();
 		scale += key_tri_vert();
-		x += lu_sin(1000*rot)/(float)6000;
-		y += lu_cos(1000*rot)/(float)6000;
-		obj_aff_rotscale(obj_aff_buffer,scale,scale,rot*1000);
+		if (key_held(1<<KI_A)) {
+			speed += .04f;
+		}
+		speed *= friction;
+		x += speed*lu_sin(500*rot)/(float)6000;
+		y += speed*lu_cos(500*rot)/(float)6000;
+		
+		obj_aff_rotscale(obj_aff_buffer,scale,scale,rot*500);
 		obj_set_pos(obj_buffer,x,y);
 		oam_copy(oam_mem, obj_buffer, 4);
 	}
